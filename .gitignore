@@ -20,3 +20,4 @@ composer.lock
 *.bak
 *__pycache__*
 webroot/index.php
+webroot/moban/*
