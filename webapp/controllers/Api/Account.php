@@ -20,7 +20,7 @@ class Account extends BaseApiController
 			$this->fail(ErrorCode::$IllegalUser,'用户不存在');
 		}
 		
-		if($user['account_pwd']!=$account_pwd){//这里得搞个加密
+		if($user['account_pwd']!=$this->secret_pwd($account_pwd) ){//这里得搞个加密
 			$this->fail(ErrorCode::$PwdError,'密码错误');
 		}
 		$account = array(
