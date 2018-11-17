@@ -112,7 +112,7 @@ class Marker extends BaseApiController
 				}
 			}
 		}
-		$this->response($this->retv->gen_result($markerInfo));
+		$this->success($markerInfo);
 		
 	}
 

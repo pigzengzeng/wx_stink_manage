@@ -7,7 +7,6 @@ class BaseApiController extends CI_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->library('session');
-        $this->load->library('retv');
         $this->load->model('account_model');
         $BM =& load_class('Benchmark', 'core');
         $this->_start_time = $BM->marker['total_execution_time_start'];

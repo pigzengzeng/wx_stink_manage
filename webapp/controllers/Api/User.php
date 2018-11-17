@@ -4,7 +4,6 @@ class User extends BaseApiController
 	public function __construct(){
 		parent::__construct();
         $this->load->library('session');
-        $this->load->library('retv');
         $this->load->model('user_model');
         $this->check_login();
 	}

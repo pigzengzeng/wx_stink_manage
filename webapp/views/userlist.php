@@ -130,13 +130,18 @@
 
            <div class="pagination text-right">
               <ul>
+                <?php echo $pagination?>
+
+                <?php if(1==2){?>
                 <li><a href="?page=<?=$page-1?>&keyword=<?=urldecode($keyword)?>">前一页</a></li>
-                <?php 
+                <?php
+
                 for($i=1;$i<=$total_page;$i++){?>
                 <li <?=$page==$i?'class="active"':''?> > <a href="?page=<?=$i?>&keyword=<?=urldecode($keyword)?>"><?=$i?></a> </li>
                 <?php }?>
-
                 <li><a href="?page=<?=$page+1?>&keyword=<?=urldecode($keyword)?>">后一页</a></li>
+                <?php }?>
+                
               </ul>
           </div>
           

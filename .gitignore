@@ -19,5 +19,4 @@ ci.iml
 composer.lock
 *.bak
 *__pycache__*
-index.php
-webroot
+webroot/index.php

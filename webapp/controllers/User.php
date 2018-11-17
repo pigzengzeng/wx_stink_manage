@@ -13,7 +13,7 @@ class User extends BasePageController
 	public function userlist(){
 		$data['current_url']='/user/userlist';
 		
-		$page = $this->input->get('page');
+		$page = $this->input->get('per_page');
 		$size = 10;
 
 
@@ -73,6 +73,45 @@ class User extends BasePageController
 
 		
 		//print_r($users);
+		$config = array();
+		$this->load->library('pagination');
+		$config['base_url'] = '/user/userlist?keyword='.urlencode($keyword);
+		$config['total_rows'] = $total;
+		$config['per_page'] = 10;
+		$config['num_links'] = 3;
+		$config['use_page_numbers'] = TRUE;
+		$config['page_query_string'] = TRUE;
+		$config['enable_query_strings'] = TRUE;
+
+		$config['first_link'] = '第一页';
+		$config['first_tag_open'] = '<li>';
+		$config['first_tag_close'] = '</li>';
+
+
+		$config['last_link'] = '最末页';
+		$config['last_tag_open'] = '<li>';
+		$config['last_tag_close'] = '</li>';
+
+		$config['prev_link'] = '上一页';
+		$config['prev_tag_open'] = '<li>';
+		$config['prev_tag_close'] = '</li>';
+
+
+		$config['next_link'] = '下一页';
+		$config['next_tag_open'] = '<li>';
+		$config['next_tag_close'] = '</li>';
+
+		
+		$config['cur_tag_open'] = '<li class="active"><a>';
+		$config['cur_tag_close'] = '</a></li>';
+
+		$config['num_tag_open'] = '<li>';
+		$config['num_tag_close'] = '</li>';
+
+
+		$this->pagination->initialize($config);
+
+		$data['pagination'] = $this->pagination->create_links();
 		
 
 		$this->load->view("userlist",$data);
