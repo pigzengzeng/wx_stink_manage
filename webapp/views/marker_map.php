@@ -201,8 +201,9 @@
 						
 						var userId = users[i].pk_user
 						
-						var user_icon = "/static/map_imgs/user_face_"+(userId%10)+".svg";
-						var content = "<img src='"+user_icon+"' width='32' height='32'/>"
+						//var user_icon = "/static/map_imgs/user_face_"+(userId%10)+".svg";
+						var user_icon = "/static/map_imgs/wgy.png";
+						var content = "<img src='"+user_icon+"' width='20' height='32'/>"
 						var last_lat = users[i].last_lat;
 						var last_lon = users[i].last_lon;
 
