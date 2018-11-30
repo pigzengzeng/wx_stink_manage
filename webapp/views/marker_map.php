@@ -9,6 +9,8 @@
 
 
 <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.10&key=ddafe9c7c9f13d041501859abbacc05d"></script> 
+<script src="//webapi.amap.com/ui/1.0/main.js"></script>
+
 <style type="text/css">
 	
 	
@@ -339,17 +341,35 @@
 		function openUserInfo(e){
 			var user = e.target.getExtData()
 			var position = e.target.getPosition()
-			var content = [
-				    "用户:"+(user.nickname?user.nickname:'匿名用户'),
-				    "真名:"+(user.realname?user.realname:''),
-				    "最后所在位置:"+formatDegree(user.last_lon) +","+formatDegree(user.last_lat),
-				    "最后更新时间:"+user.lastupdate
-				];
-			var infoWindow = new AMap.InfoWindow({
-			   content: content.join("<br>"),
-			   offset:new AMap.Pixel(14,-43)
-			});
-			infoWindow.open(map, position);
+
+			AMap.plugin('AMap.Geocoder', function() {
+				var geocoder = new AMap.Geocoder({})
+				var lnglat = [user.last_lon, user.last_lat]
+				geocoder.getAddress(lnglat, function(status, result) {
+					var content = [
+					    "用户:"+(user.nickname?user.nickname:'匿名用户'),
+					    "真名:"+(user.realname?user.realname:''),
+					    "最后所在位置:"+formatDegree(user.last_lon) +","+formatDegree(user.last_lat)
+					];
+
+					if (status === 'complete' && result.info === 'OK') {
+					    content.push(result.regeocode.formattedAddress)
+					}
+					
+					content.push("最后更新时间:"+user.lastupdate)
+					var infoWindow = new AMap.InfoWindow({
+					   content: content.join("<br>"),
+					   offset:new AMap.Pixel(14,-43)
+					});
+					infoWindow.open(map, position);
+				})
+			})
+			
+
+			
+			
+
+			
 
 		}
 		function openMarkerInfo(e){
@@ -360,20 +380,35 @@
 				type:"get",
 				dataType:"json",
 				success:function(res){
-					var content = [
-					    "markerId:"+res.result.markerId,
-					    "用户:"+(res.result.user.nickname?res.result.user.nickname:'匿名用户'),
-					    "真名:"+(res.result.user.realname?res.result.user.realname:''),
-					    "位置:"+formatDegree(res.result.longitude) +","+formatDegree(res.result.latitude),
-					    "提交时间:"+res.result.createtime,
-					    "用户类型:"+(res.result.user.user_type==1?'网格员':'一般用户')
-					    
-					];
-					var infoWindow = new AMap.InfoWindow({
-					   content: content.join("<br>"),
-					   offset:new AMap.Pixel(14,-43)
-					});
-					infoWindow.open(map, position);
+
+
+					AMap.plugin('AMap.Geocoder', function() {
+						var geocoder = new AMap.Geocoder({})
+						var lnglat = [res.result.longitude, res.result.latitude]
+
+						geocoder.getAddress(lnglat, function(status, result) {
+							var content = [
+							    "markerId:"+res.result.markerId,
+							    "用户:"+(res.result.user.nickname?res.result.user.nickname:'匿名用户'),
+							    "真名:"+(res.result.user.realname?res.result.user.realname:''),
+							    "用户类型:"+(res.result.user.user_type==1?'网格员':'一般用户'),
+							    "位置:"+formatDegree(res.result.longitude) +","+formatDegree(res.result.latitude)
+							    
+							];
+
+							if (status === 'complete' && result.info === 'OK') {
+							    content.push(result.regeocode.formattedAddress)
+							}
+							content.push("提交时间:"+res.result.createtime)
+							var infoWindow = new AMap.InfoWindow({
+							   content: content.join("<br>"),
+							   offset:new AMap.Pixel(14,-43)
+							});
+							infoWindow.open(map, position);
+						})
+					})
+
+					
 
 					//显示图片
 					$('#ul_photo_list').empty();
@@ -482,6 +517,8 @@ function formatDegree(value) {
   var v3 = Math.round((value - v1) * 3600 % 60);//秒
   return v1 + '°' + v2 + '\'' + v3 + '"';
 }
+
+
 
 </script>
 
