@@ -4,24 +4,52 @@
 <title>恶臭小程序管理后台</title>
 <?php require_once('global_css.php')?>
 <style type="text/css">
-.search{
-	position: absolute;
-    z-index: 25;
-    top: 3px;
-    right: 10px;
+
+.search {
+  
+  display: flex;
+  flex-direction: row;
+  justify-content:flex-end;
+  align-items:center;
 }
-.search button {
-    border: 0;
-    margin-left: -3px;
-    margin-top: -11px;
-    padding: 5px 10px 4px;
+.search .filter {
+
 }
+.search .filter input[type="checkbox"]{
+  margin: 2px
+}
+.search .keyword  {
+ margin-left: 10px 
+}
+.search .keyword input[type="text"] {
+  margin: 0px;
+  height: 16px
+}
+.search button{
+  margin-left: -3px;
+}
+
+
+
+
 .table-text-center td{
 	text-align: center;
 }
 .pagination ul{
-	padding-right: 10px
+	padding-right: 10px;
 }
+.pagination div{
+  padding-right: 10px;
+}
+
+.pagination{
+  
+  display: flex;
+  flex-direction: row;
+  justify-content:flex-end;
+  align-items:center;
+}
+
 </style>
 </head>
 <body>
@@ -44,13 +72,31 @@
 
           	<span class="icon"><input type="checkbox" id="chk_select_all"/></span>
             <h5>用户列表</h5>
+
+            <div class="search">
+              <div class="filter">
+                <?php
+                
+                ?>
+                类型：
+                <input type="checkbox" name="user_type" value="1" id="input_user_type_wgy" <?=strpos($user_type, "1")===false?"":"checked='true'"?>">网格员
+                <input type="checkbox" name="user_type" value="0" id="input_user_type_yb" <?=strpos($user_type, "0")===false?"":"checked='true'"?>">普通用户
+
+                状态：
+                <input type="checkbox" name="state" value="0" id="input_state_0" <?=strpos($state, "0")===false?"":"checked='true'"?>">正常
+                <input type="checkbox" name="state" value="1" id="input_state_1" <?=strpos($state, "1")===false?"":"checked='true'"?>">被屏蔽
+
+              </div>
+              <div class="keyword">
+                <input type="text" placeholder="搜索用户..." id="input_keyword" value="<?=htmlspecialchars($keyword)?>">
+                <button type="submit" class="btn-success" title="Search" id='btn_search'><i class="icon-search icon-white"></i></button>
+              </div>
+            </div>
+
           </div>
           
           <div class="widget-content nopadding">
-          	<div class="search">
-          		<input type="text" placeholder="搜索用户..." id="input_keyword" value="<?=htmlspecialchars($keyword)?>">
-          		<button type="submit" class="btn-success" title="Search" id='btn_search'><i class="icon-search icon-white"></i></button>
-          	</div>
+          	
           	
             <table class="table table-bordered table-striped with-check table-text-center">
               <thead>
@@ -129,19 +175,9 @@
           </div>
 
            <div class="pagination text-right">
+              <div> 共<?=$total_page?>页 <?=$total?>条记录 </div>
               <ul>
                 <?php echo $pagination?>
-
-                <?php if(1==2){?>
-                <li><a href="?page=<?=$page-1?>&keyword=<?=urldecode($keyword)?>">前一页</a></li>
-                <?php
-
-                for($i=1;$i<=$total_page;$i++){?>
-                <li <?=$page==$i?'class="active"':''?> > <a href="?page=<?=$i?>&keyword=<?=urldecode($keyword)?>"><?=$i?></a> </li>
-                <?php }?>
-                <li><a href="?page=<?=$page+1?>&keyword=<?=urldecode($keyword)?>">后一页</a></li>
-                <?php }?>
-                
               </ul>
           </div>
           
@@ -264,8 +300,36 @@ __hook_funs.push(function(){
 
 	
 function doSearch(){
+  var params = []
+
 	var keyword = $('#input_keyword').val();
-	window.location.href = "?keyword="+encodeURIComponent(keyword)
+  params.push( "keyword="+encodeURIComponent(keyword) )
+
+  var user_type = [];
+  if( $('#input_user_type_wgy').prop("checked") ) {
+    user_type.push(1)
+  }
+  if( $('#input_user_type_yb').prop("checked") ) {
+    user_type.push(0)
+  }
+  var str_user_type = user_type.join(",")
+  if(str_user_type!=""){
+    params.push("user_type="+str_user_type)
+  }
+  var state = [];
+  if( $('#input_state_0').prop("checked") ) {
+    state.push(0)
+  }
+  if( $('#input_state_1').prop("checked") ) {
+    state.push(1)
+  }
+  var str_state = state.join(",")
+  if(str_state!=""){
+    params.push("state="+str_state)
+  }
+
+
+	window.location.href = "?"+params.join("&")
 }
 </script>
 

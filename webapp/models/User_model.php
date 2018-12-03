@@ -12,15 +12,36 @@ class User_model extends CI_Model {
     	
 
         $query = $this->db_query->select('*');
+
+        $where = [];
         if(!empty($keyword)){
-            $query = $query->like('nickname',$keyword);
-            $query = $query->or_like('realname',$keyword);
+            $where[] = "(nickname like '%".$this->db_query->escape_like_str($keyword)."%' ESCAPE '!'
+            or realname like '%".$this->db_query->escape_like_str($keyword)."%' ESCAPE '!') ";
         }
+        if(!empty($user_type)){
+            foreach ($user_type as &$item) {
+                $item = $this->db_query->escape( $item );
+            }
+            $where[] = "user_type in (". join(",",$user_type) .")";
+        }
+        if(!empty($state)){
+            foreach ($state as &$item) {
+                $item = $this->db_query->escape( $item );
+            }
+
+            $where[] = "state in (". join(",",$state) .")";
+        }
+        $query = $query->where(join(" and ",$where));
+
+
+
+
 
         $query = $query->limit($size,$offset);
 
         $query = $query->order_by($order_field,$order);
         $query = $query->get('t_user');
+
         //echo $this->db_query->last_query();
     	if (!$query) {
     		$e = $this->db_query->error();
@@ -31,16 +52,26 @@ class User_model extends CI_Model {
 
     public function get_total($keyword,$user_type=array(),$state=array()){
         $query = $this->db_query->select('count(*) as c');
+        $where = [];
         if(!empty($keyword)){
-            $query = $query->like('nickname',$keyword);
-            $query = $query->or_like('realname',$keyword);
+            $where[] = "(nickname like '%".$this->db_query->escape_like_str($keyword)."%' ESCAPE '!'
+            or realname like '%".$this->db_query->escape_like_str($keyword)."%' ESCAPE '!') ";
         }
         if(!empty($user_type)){
-            $query = $query->where_in('user_type',$user_type);
+            foreach ($user_type as &$item) {
+                $item = $this->db_query->escape( $item );
+            }
+            $where[] = "user_type in (". join(",",$user_type) .")";
         }
         if(!empty($state)){
-            $query = $query->where_in('state',$state);
+            foreach ($state as &$item) {
+                $item = $this->db_query->escape( $item );
+            }
+
+            $where[] = "state in (". join(",",$state) .")";
         }
+        $query = $query->where(join(" and ",$where));
+        
         $query = $query->get('t_user');
         //echo $this->db_query->last_query();
         if (!$query) {

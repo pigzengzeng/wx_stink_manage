@@ -14,7 +14,7 @@ class User extends BasePageController
 		$data['current_url']='/user/userlist';
 		
 		$page = $this->input->get('per_page');
-		$size = 10;
+		$size = 20;
 
 
 		$keyword = $this->input->get('keyword');
@@ -33,12 +33,12 @@ class User extends BasePageController
 
 		if(empty($keyword))$keyword='';
 
-		if(empty($user_type)){
+		if(!isset($user_type)){
 			$user_type_array = array();
 		}else{
 			$user_type_array = explode(',', $user_type);
 		}
-		if(empty($state)){
+		if(!isset($state)){
 			$state_array = array();
 		}else{
 			$state_array = explode(',', $state);
@@ -75,9 +75,9 @@ class User extends BasePageController
 		//print_r($users);
 		$config = array();
 		$this->load->library('pagination');
-		$config['base_url'] = '/user/userlist?keyword='.urlencode($keyword);
+		$config['base_url'] = '/user/userlist?keyword='.urlencode($keyword)."&user_type=".join(",",$user_type_array)."&state=".join(",",$state_array);
 		$config['total_rows'] = $total;
-		$config['per_page'] = 10;
+		$config['per_page'] = $size;
 		$config['num_links'] = 3;
 		$config['use_page_numbers'] = TRUE;
 		$config['page_query_string'] = TRUE;
