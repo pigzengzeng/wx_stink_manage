@@ -33,12 +33,12 @@ class User extends BasePageController
 
 		if(empty($keyword))$keyword='';
 
-		if(!isset($user_type)){
+		if($user_type==""){
 			$user_type_array = array();
 		}else{
 			$user_type_array = explode(',', $user_type);
 		}
-		if(!isset($state)){
+		if($state==""){
 			$state_array = array();
 		}else{
 			$state_array = explode(',', $state);
