@@ -31,10 +31,9 @@ class User_model extends CI_Model {
 
             $where[] = "state in (". join(",",$state) .")";
         }
-        $query = $query->where(join(" and ",$where));
-
-
-
+        if(!empty($where)){
+            $query = $query->where(join(" and ",$where));    
+        }
 
 
         $query = $query->limit($size,$offset);
@@ -70,7 +69,10 @@ class User_model extends CI_Model {
 
             $where[] = "state in (". join(",",$state) .")";
         }
-        $query = $query->where(join(" and ",$where));
+        if(!empty($where)){
+            $query = $query->where(join(" and ",$where));    
+        }
+        
         
         $query = $query->get('t_user');
         //echo $this->db_query->last_query();
