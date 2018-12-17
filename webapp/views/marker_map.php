@@ -20,6 +20,9 @@
 	.view_control{
 		padding: 6px;
 	}
+	.map_window_photo_container {
+		width:300px;
+	}
 
 </style>
 </head>
@@ -37,28 +40,59 @@
 <!--End-breadcrumbs-->
   <div class="container-fluid">
   	<div class="row-fluid">
-	  	<div id="map_container" class="span10"></div>
-	  	<div id="marker_photo" class="span2">
-	  		<div class="widget-box">
-	          <div class="widget-title"> <span class="icon"> <i class="icon-picture"></i> </span>
-	            <h5>现场照片</h5>
-	          </div>
-	          <div class="widget-content">
-	            <ul class="thumbnails" id="ul_photo_list">
-	              
-	            </ul>
-	          </div>
-	        </div>
-	  	</div>
-	  	<div class="span10">
-	  		<div class="view_control span12">
-	  				
-			  		<button class="btn btn-primary" id="btn_wgy_marker">网格员标记</button>	
+	  	<div id="map_container" class="span12"></div>
+
+	  	<div class="widget-box">
+	  		<div class="widget-content nopadding">
+	  			<form action="#" method="get" class="form-horizontal">
+	  				<button class="btn btn-primary" id="btn_wgy_marker">网格员标记</button>	
 			  		<button class="btn btn-primary" id="btn_user_marker">用户标记</button>
-			  		<button class="btn btn-primary" id="btn_wgy_position">网格员位置</button>
+			  		<button class="btn btn-primary" id="btn_wgy_position">网格员位置</button>			  		
+			  		时间：
 			  		<button class="btn btn-primary" id="btn_time_today">本日</button>
 			  		<button class="btn" id="btn_time_week">本周</button>
 			  		<button class="btn" id="btn_time_month">本月</button>
+	  				
+
+	  				
+		        </form>
+	  		</div>
+	  	</div>
+
+	  	<div class="span10">
+	  		<div class="view_control span12">
+		  			<!--
+	  				<lable class="control-label">显示标记：</lable>
+	  				<input type="checkbox" name="" id="checkbox_wgy">网格员
+	  				<input type="checkbox" name="" id="checkbox_user">热心用户
+	  				<br />
+	  				网格员位置：
+	  				<input type="radio" name="wgy" id="radio_wgy">显示
+	  				<input type="radio" name="wgy" id="radio_wgy">不显示
+	  				自定义时间：
+
+			  		从
+			  		<div  data-date="2018-12-17" class="input-append date datepicker" id="div_date_from">
+                  		<input type="text" value="2018-12-17"  data-date-format="yyyy-mm-dd" id="input_date_from" />
+                  		<span class="add-on"><i class="icon-th"></i></span>
+                  	</div>
+                  	到
+                  	<div  data-date="2018-12-17" class="input-append date datepicker" id="div_date_to">
+                  		<input type="text" value="2018-12-17"  data-date-format="yyyy-mm-dd" id="input_date_to" />
+                  		<span class="add-on"><i class="icon-th"></i></span>
+                  	</div>
+                  	<button class="btn" id="btn_search">查寻</button>
+
+                  	</br>
+                  -->
+
+
+
+
+
+			  		
+			  		
+			  		
 
 		  			
 		  			
@@ -365,13 +399,9 @@
 				})
 			})
 			
-
-			
-			
-
-			
-
 		}
+
+		
 		function openMarkerInfo(e){
 			var markerId = e.target.getExtData().markerId
 			var position = e.target.getPosition()
@@ -380,7 +410,34 @@
 				type:"get",
 				dataType:"json",
 				success:function(res){
+					//显示图片
+					$('#ul_photo_list').empty();
+					var photo_files = [];
 
+					if(res.result.photo_files){
+						photo_files = res.result.photo_files
+					}
+					var image_body = ''
+					for(let i=0;i<photo_files.length;i++){
+						var content = '<a href="#"> <img src="'+res_request_url+photo_files[i]+'" width="80" alt="" onclick="preview_photo(this)" > </a>'
+						//$('#ul_photo_list').append(content.join("\n"));
+						image_body += content
+					}
+					var photo_html = [
+						'<div class="widget-box map_window_photo_container">',
+			          		'<div class="widget-title"> <span class="icon"> <i class="icon-picture"></i> </span>',
+			            		'<h5>现场照片</h5></div>',
+			          		'<div class="widget-content">',
+				            	'<ul class="thumbnails" id="ul_photo_list">',
+				              	image_body,
+				            	'</ul></div>',
+			        	'</div>'
+			        	]
+			        photo_html = [
+			        	image_body
+			        ]
+
+			        //地图上显示信息窗体
 
 					AMap.plugin('AMap.Geocoder', function() {
 						var geocoder = new AMap.Geocoder({})
@@ -392,14 +449,16 @@
 							    "用户:"+(res.result.user.nickname?res.result.user.nickname:'匿名用户'),
 							    "真名:"+(res.result.user.realname?res.result.user.realname:''),
 							    "用户类型:"+(res.result.user.user_type==1?'网格员':'一般用户'),
-							    "位置:"+formatDegree(res.result.longitude) +","+formatDegree(res.result.latitude)
-							    
+							    "位置:"+formatDegree(res.result.longitude) +","+formatDegree(res.result.latitude),
 							];
 
 							if (status === 'complete' && result.info === 'OK') {
 							    content.push(result.regeocode.formattedAddress)
 							}
 							content.push("提交时间:"+res.result.createtime)
+
+							content.push(photo_html.join('\n'))
+
 							var infoWindow = new AMap.InfoWindow({
 							   content: content.join("<br>"),
 							   offset:new AMap.Pixel(14,-43)
@@ -410,24 +469,10 @@
 
 					
 
-					//显示图片
-					$('#ul_photo_list').empty();
-					var photo_files = [];
+					
 
-					if(res.result.photo_files){
-						photo_files = res.result.photo_files
-					}
 
-					for(var i=0;i<photo_files.length;i++){
-
-						var content = [
-							'<li class="span12" >',
-			              		'<a href="#"> <img src="'+res_request_url+photo_files[i]+'" alt="" onclick="preview_photo(this)" > </a>',
-		              		'</li>'
-						];
-						$('#ul_photo_list').append(content.join("\n"));
-
-					}
+					
 					
 
 				}
@@ -446,6 +491,7 @@
     	});
 
 		$('#map_container').css('height',$(document).height()*0.6)
+
 	});
 
 	function preview_photo(e) {
