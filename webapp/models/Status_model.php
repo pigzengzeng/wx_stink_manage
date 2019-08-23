@@ -102,17 +102,12 @@ class Status_model extends CI_model
         if(!empty($data['aggregations']['cities']['buckets'])){
             $cities = $data['aggregations']['cities']['buckets'];
             foreach ($cities as $item) {
-                if(empty($item['key'])){
-                    $r[] = [
-                        'city' => '未知',
-                        'count'=> $item['doc_count']
-                    ];    
-                }else{
-                    $r[] = [
-                        'city' => $item['key'],
-                        'count'=> $item['doc_count']
-                    ];    
-                }
+                if(empty($item['key']))continue;
+                $r[] = [
+                    'city' => $item['key'],
+                    'count'=> $item['doc_count']
+                ];    
+                
                 
             }
         }
