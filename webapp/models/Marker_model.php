@@ -33,26 +33,6 @@ class Marker_model extends CI_model
 	 */
     
     public function get_markers($x1,$y1,$x2,$y2,$level,$time_from,$time_to){
-    	//数据库取数据
-        /*
-    	$size =1000 ;
-
-    	$this->db_query->select('*');
-    	$this->db_query->from('t_marker');
-        $this->db_query->where('state',0);
-    	$this->db_query->limit($size);
-    	
-    	if(!$query = $this->db_query->get()){
-    		$e = $this->db_query->error();
-    		throw new Exception($e['message'], $e['code']);
-    	}
-    	return $query->result_array();
-
-        
-
-        */
-
-
     	
     	/*ES取数据
     	 * 
@@ -109,12 +89,12 @@ class Marker_model extends CI_model
 
         //$params['body']=array();
         if(!empty($time_from)){
-            $params['body']['query']['bool']['must']['range']['lastupdate']['gte'] = $time_from;
+            $params['body']['query']['bool']['must']['range']['createtime']['gte'] = $time_from;
             //$params['body']['query']['range']['lastupdate']['gte'] = $time_from;
         }
         
         if(!empty($time_to)){
-            $params['body']['query']['bool']['must']['range']['lastupdate']['lte'] = $time_to;
+            $params['body']['query']['bool']['must']['range']['createtime']['lte'] = $time_to;
         }
         
         if(!empty($userid)){
@@ -168,6 +148,38 @@ class Marker_model extends CI_model
     	return $affected_rows;
     }
     
+    public function  search($data){
+       
+        
+        $size =1000 ;
+
+        $this->db_query->select('*');
+        $this->db_query->from('t_marker');
+        $this->db_query->where('state',0);
+        $this->db_query->order_by('pk_marker','desc');
+        $this->db_query->limit($size);
+        
+        if(!$query = $this->db_query->get()){
+            $e = $this->db_query->error();
+            throw new Exception($e['message'], $e['code']);
+        }
+        return $query->result_array();
+
+
+    }
+
+    public function update_marker($marker_id,$fields){
+        if(empty($fields)) return 0;
+        
+        if(!$this->db_main->set($fields)->
+                where('pk_marker', $marker_id)->
+                update('t_marker')) {
+            $error = $this->db_main->error();
+            throw new Exception($error['message'], $error['code']);
+        }
+        $affected_rows = $this->db_main->affected_rows();
+        return $affected_rows;        
+    }
     
    
 

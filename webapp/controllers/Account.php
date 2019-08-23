@@ -3,11 +3,10 @@ class Account extends BasePageController
 {
 	public function __construct(){
 		parent::__construct();
-		
+		$this->load->model('status_model');
 	}
 	public function index(){
-		$this->check_login();
-		
+		$this->check_login();		
 		$data['current_url']='/account/index';
 		$this->load->view("index",$data);
 	}

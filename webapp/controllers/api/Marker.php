@@ -12,6 +12,7 @@ class Marker extends BaseApiController
 	}
 	public function get_markers(){
 		
+		
 		$x1 = $this->input->get('x1');
 		$y1 = $this->input->get('y1');
 		$x2 = $this->input->get('x2');
@@ -43,6 +44,7 @@ class Marker extends BaseApiController
 		try{
 			$markers = $this->marker_model->get_markers($x1,$y1,$x2,$y2,$level_array,$time_from,$time_to);
 		}catch (Exception $e){
+			print_r(ErrorCode);
 			$this->fail(ErrorCode::$DBError,$e['message']);
 		}
 
