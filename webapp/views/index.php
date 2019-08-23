@@ -202,7 +202,7 @@ function show_odour_intensity(dt,city){
 				
 				let titles =  [];
 				let values =  [];	
-				if(res.result.length>0){
+				if(res.result){
 					titles = res.result.odours.titles || [];
 					values = res.result.odours.values || [];	
 				}
@@ -232,7 +232,7 @@ function show_odour_intensity(dt,city){
 				
 				titles =  [];
 				values =  [];	
-				if(res.result.length>0){
+				if(res.result){
 					titles = res.result.intensities.titles || [];
 					values = res.result.intensities.values || [];
 				}
