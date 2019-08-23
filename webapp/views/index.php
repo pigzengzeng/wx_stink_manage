@@ -203,8 +203,10 @@ function show_odour_intensity(dt,city){
 				let titles =  [];
 				let values =  [];	
 				if(res.result){
-					titles = res.result.odours.titles || [];
-					values = res.result.odours.values || [];	
+					if(res.result.odours){
+						titles = res.result.odours.titles || [];
+						values = res.result.odours.values || [];
+					}	
 				}
 				
 				for(let i=0;i<titles.length;i++){
@@ -233,8 +235,11 @@ function show_odour_intensity(dt,city){
 				titles =  [];
 				values =  [];	
 				if(res.result){
-					titles = res.result.intensities.titles || [];
-					values = res.result.intensities.values || [];
+					if(res.result.intensities){
+						titles = res.result.intensities.titles || [];
+						values = res.result.intensities.values || [];	
+					}
+					
 				}
 				for(let i=0;i<titles.length;i++){
 					//option.legend.data.push(titles[i]); //图例
