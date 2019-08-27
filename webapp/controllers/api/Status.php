@@ -40,7 +40,7 @@ class Status extends BaseApiController
 			$from_ctime=date("Y-m-d H:i:s",time()-86400*30);
 			$to_ctime=date("Y-m-d H:i:s",time());
 		}
-		$from_ctime = date("Y-m-d H:i:s",time()-86400*365);
+		//$from_ctime = date("Y-m-d H:i:s",time()-86400*365);
 
 		if(!empty($this->city)){
 			$city = $this->city;

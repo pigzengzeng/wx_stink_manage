@@ -46,8 +46,7 @@ class Marker extends BaseApiController
 		
 		try{
 			$markers = $this->marker_model->get_markers($x1,$y1,$x2,$y2,$level_array,$time_from,$time_to,$this->city);
-		}catch (Exception $e){
-			print_r(ErrorCode);
+		}catch (Exception $e){			
 			$this->fail(ErrorCode::$DBError,$e['message']);
 		}
 
