@@ -1,6 +1,7 @@
 <?php
 class Marker extends BaseApiController
 {
+	private $city = '';
 	public function __construct(){
 		parent::__construct();
         $this->load->model('marker_model');
@@ -9,6 +10,8 @@ class Marker extends BaseApiController
         $this->load->model('res_model');
         
         $this->check_login();
+
+        $this->city = empty($this->account['city'])?'':$this->account['city'];
 	}
 	public function get_markers(){
 		
@@ -42,7 +45,7 @@ class Marker extends BaseApiController
 		}
 		
 		try{
-			$markers = $this->marker_model->get_markers($x1,$y1,$x2,$y2,$level_array,$time_from,$time_to);
+			$markers = $this->marker_model->get_markers($x1,$y1,$x2,$y2,$level_array,$time_from,$time_to,$this->city);
 		}catch (Exception $e){
 			print_r(ErrorCode);
 			$this->fail(ErrorCode::$DBError,$e['message']);

@@ -8,7 +8,6 @@ class Marker extends BasePageController
 		$this->load->model('marker_model');
 		$this->check_login();
         
-
 	}
 	public function marker_map(){
 		$data['current_url']='/marker/marker_map';

@@ -25,7 +25,8 @@ class Account extends BaseApiController
 		}
 		$account = array(
 			'account_id'=>$user['pk_account'],
-			'account_name'=>$user['account_name']
+			'account_name'=>$user['account_name'],
+			'city'=>$user['city']
 		);
 
 		$this->session->set_userdata('account',$account);

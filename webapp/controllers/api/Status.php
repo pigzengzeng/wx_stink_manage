@@ -16,10 +16,12 @@ class Status extends BaseApiController
 			'4'=>'难忍'
 			
 	];
+	private $city = '';
 	public function __construct(){
 		parent::__construct();
         $this->load->model('status_model');
-        $this->check_login();
+        $this->check_login();        
+        $this->city = empty($this->account['city'])?'':$this->account['city'];
 	}
 	public function get_status_for_odour_intensity(){
 		$dt = $this->input->get("dt");
@@ -37,6 +39,11 @@ class Status extends BaseApiController
 		if($dt=='m'){
 			$from_ctime=date("Y-m-d H:i:s",time()-86400*30);
 			$to_ctime=date("Y-m-d H:i:s",time());
+		}
+		$from_ctime = date("Y-m-d H:i:s",time()-86400*365);
+
+		if(!empty($this->city)){
+			$city = $this->city;
 		}
 
 		$data = $this->status_model->get_status_for_odour_intensity($from_ctime,$to_ctime,$city);
@@ -61,6 +68,11 @@ class Status extends BaseApiController
 	}
 
 	public function get_status_cities(){
+		if(!empty($this->city)){
+			$city = $this->city;
+			$this->success($city);
+		}
+
 		$dt = $this->input->get("dt");		
 		if($dt=='d' ||empty($dt)){
 			$from_ctime=date("Y-m-d H:i:s",time()-86400);
@@ -84,6 +96,9 @@ class Status extends BaseApiController
 	public function get_status_for_district(){
 		$dt = $this->input->get("dt");
 		$city = $this->input->get("city");
+		if(!empty($this->city)){
+			$city = $this->city;
+		}
 		if($dt=='d' ||empty($dt)){
 			$from_ctime=date("Y-m-d H:i:s",time()-86400);
 			$to_ctime=date("Y-m-d H:i:s",time());

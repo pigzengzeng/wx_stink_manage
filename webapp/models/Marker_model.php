@@ -32,7 +32,7 @@ class Marker_model extends CI_model
 	 * 获取多个marker点
 	 */
     
-    public function get_markers($x1,$y1,$x2,$y2,$level,$time_from,$time_to){
+    public function get_markers($x1,$y1,$x2,$y2,$level,$time_from,$time_to,$city=''){
     	
     	/*ES取数据
     	 * 
@@ -88,19 +88,28 @@ class Marker_model extends CI_model
         }
 
         //$params['body']=array();
+        $must = [];
         if(!empty($time_from)){
-            $params['body']['query']['bool']['must']['range']['createtime']['gte'] = $time_from;
+            $must[0]['range']['createtime']['gte'] = $time_from;
             //$params['body']['query']['range']['lastupdate']['gte'] = $time_from;
         }
         
         if(!empty($time_to)){
-            $params['body']['query']['bool']['must']['range']['createtime']['lte'] = $time_to;
+            $must[0]['range']['createtime']['lte'] = $time_to;
         }
         
+        if(!empty($city)){
+            $must[1] = ['term'=>['city'=>$city]];
+        }
+        $params['body']['query']['bool']['must'] = $must;
+
+
         if(!empty($userid)){
             $params['body']['query']['bool']['filter'][]['term']['fk_user'] = $userid;
             
         }
+
+
 	    //print_r($params);
 	    try{
 	    	$markers = $client->search($params);

@@ -6,7 +6,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <style type="text/css">
 	#tab_charts {
-
+		margin: 10px;
 	}
 </style>
 </head>
@@ -23,47 +23,45 @@
   </div>
 <!--End-breadcrumbs-->
   <div class="container-fluid">
-  <table id="tab_charts">
-  
-  	<tr><td colspan="3">
-  		选择城市：<select id="select_city"></select>
-  	</td>
-  	
-  	</tr>
-  	<tr>  		
-  		<td><div id="chart_day_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_day_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_day_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  	</tr>
-  	<tr>  		
-  		<td><div id="chart_week_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_week_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_week_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  	</tr>
-  	<tr>  		
-  		<td><div id="chart_month_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_month_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  		<td><div id="chart_month_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
-  	</tr>
+	  <table id="tab_charts">  	
+	  	<tr>
+	  		<td colspan="3" id="tab_title">
+	  			选择城市：<select id="select_city"></select>  		
+	  		</td>  	
+	  	</tr>
+	  	<tr>  		
+	  		<td><div id="chart_day_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_day_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_day_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  	</tr>
+	  	<tr>  		
+	  		<td><div id="chart_week_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_week_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_week_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  	</tr>
+	  	<tr>  		
+	  		<td><div id="chart_month_odour"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_month_intensity"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  		<td><div id="chart_month_city"  style="width: 300px;height:200px;background: #EEEEEE"></div></td>
+	  	</tr>
 
-  </table>
+	  </table>
   </div>
 
 </div>
 <!--end-main-container-part-->
 <script type="text/javascript">
-__hook_funs.push(function(){
-	$("#select_city").change(function(){
-		refresh_chart();
-	})
+var _city = '';
 
+__hook_funs.push(function(){
+	
 	init_city(function(){
 		refresh_chart();
 	});
 });
 
-function refresh_chart(){
-	let city = $("#select_city").val();
+function refresh_chart(){	
+	let city = _city;
 	show_odour_intensity('d',city);
 	show_odour_intensity('w',city);
 	show_odour_intensity('m',city);	
@@ -82,15 +80,26 @@ function init_city(cb){
 			success:function (res){	
 				if(!res.result)return;
 				let cities = res.result;
-				cities.forEach(function(city){
-					let opt = document.createElement('option');
-					$(opt).prop('value',city.city);					
-					$(opt).text(city.city);
-					if(city.city=='日照市'){
-						$(opt).prop('selected',true);					
-					}
-					$("#select_city").append(opt);					
-				})
+				if(! (cities instanceof Array)){
+					_city = cities;
+					$("#tab_title").prop("align","center");
+					$("#tab_title").html("<span style='font-size:30px'>"+_city+"气味举报情况</span>");
+				}else{
+					cities.forEach(function(city){
+						let opt = document.createElement('option');
+						$(opt).prop('value',city.city);					
+						$(opt).text(city.city);
+						if(city.city=='日照市'){
+							$(opt).prop('selected',true);							
+						}
+						$("#select_city").append(opt);					
+					})
+					_city = $("#select_city").val();
+					$("#select_city").change(function(){
+						_city = $("#select_city").val();
+						refresh_chart();
+					})
+				}
 				cb();
 				
 			}
