@@ -176,6 +176,10 @@ class Marker_model extends CI_model
 
 
     }
+    public function insert_marker($data){
+        $this->db_main->insert('t_marker',$data);
+        $insert_id = $this->db_main->insert_id();        
+    }
 
     public function update_marker($marker_id,$fields){
         if(empty($fields)) return 0;
@@ -189,8 +193,7 @@ class Marker_model extends CI_model
         $affected_rows = $this->db_main->affected_rows();
         return $affected_rows;        
     }
-    
-   
+
 
 
 }

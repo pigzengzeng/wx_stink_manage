@@ -20,7 +20,7 @@ class Marker extends BasePageController
 		$this->load->view("login");
 	}
 
-	public function test(){
+	public function sync_area(){
 		$items = $this->marker_model->search([]);
 		$counter = 0;
 		foreach ($items as $item) {
@@ -47,9 +47,21 @@ class Marker extends BasePageController
 			]);
 			flush();
 		}
-		
-		
-
-
 	}
+	public function make_test_data(){
+		$items = $this->marker_model->search([]);
+		$counter = 0;
+		foreach ($items as &$item) {
+			unset($item['pk_marker']);
+			$item['createtime'] = date("Y-m-d H:i:s",time()-mt_rand(0,86400*7));
+			$this->marker_model->insert_marker($item);
+			$counter++;
+			print_r($item);
+			flush();
+		}
+	}
+
+
+
+
 }
