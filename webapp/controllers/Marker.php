@@ -54,6 +54,7 @@ class Marker extends BasePageController
 		foreach ($items as &$item) {
 			unset($item['pk_marker']);
 			$item['createtime'] = date("Y-m-d H:i:s",time()-mt_rand(0,86400*7));
+			$item['lastupdate'] = date("Y-m-d H:i:s",time());
 			$this->marker_model->insert_marker($item);
 			$counter++;
 			print_r($item);
