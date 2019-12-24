@@ -12,7 +12,9 @@
     <li <?php if($current_url=='/marker/marker_map') echo 'class="active"';?>>
     	<a href="/marker/marker_map"><i class="icon icon-pushpin"></i><span>标记管理</span></a>
     </li>
-
+    <li <?php if($current_url=='/conf/message') echo 'class="active"';?>>
+        <a href="/conf/message"><i class="icon icon-pushpin"></i><span>短信管理</span></a>
+    </li>
 
     
   </ul>
