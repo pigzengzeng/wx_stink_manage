@@ -194,6 +194,16 @@ class Marker_model extends CI_model
         return $affected_rows;        
     }
 
-
+    public function get_markers_for_lastutime($utime){
+        $utime=(int)$utime;
+        if(empty($utime))return;
+        $utime = date('Y-m-d H:i:s',$utime);
+        //高并发状态下会漏数据,需要使用消息队列手段进行修改
+        $sql = "select * from t_marker where lastupdate>'$utime' order by lastupdate desc";
+        //echo $sql,"\n";
+        $query = $this->db_query->query($sql);
+        return $query->result_array();
+        
+    }
 
 }

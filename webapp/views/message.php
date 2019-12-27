@@ -21,7 +21,7 @@
 <!--End-breadcrumbs-->
   <div class="container-fluid">
   	<div class="row-fluid">
-	  	<div class="span6">
+	  	<div class="span8">
       <div class="widget-box">
         <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
           <h5>接收短信条件设置</h5>
@@ -49,7 +49,7 @@
             <div class="control-group">
               <label class="control-label">手机号:</label>
               <div class="controls">
-                <textarea class="span11" name="tel"></textarea>
+                <textarea class="span11" name="tel" rows="4"></textarea>
                 <span class="help-block">多个手机号之间用半角逗号分隔</span>
               </div>
             </div>

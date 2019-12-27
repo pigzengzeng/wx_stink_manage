@@ -21,6 +21,21 @@ class Conf_model extends CI_Model {
         return $row;
     }
 
+    public function get_conf_messages_by_account_id($account_id){
+        if(empty($account_id))return false;
+        $this->db_query->select('*');
+        $this->db_query->from('t_conf_message');
+        $this->db_query->where('fk_account',$account_id);
+        if(!$query = $this->db_query->get()){
+            $e = $this->db_query->error();
+            throw new Exception($e['message'], $e['code']);
+        }
+        $r = $query->result_array();
+        if(empty($r))return false;
+        return $r;
+    }
+
+
     public function get_conf_message($conf_message_id){
         if(empty($conf_message_id))return false;
         $this->db_query->select('*');
@@ -34,6 +49,8 @@ class Conf_model extends CI_Model {
         if(empty($row))return false;
         return $row;
     }
+
+    
     public function insert_conf_message($conf_message){
         if(empty($conf_message)) return 0;
         $data=$conf_message;        

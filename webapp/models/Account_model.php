@@ -30,7 +30,19 @@ class Account_model extends CI_Model {
         if(empty($account))return false;
         return $account;
     }
-
+    public function get_account_by_city($city){
+        if(empty($city))return false;
+        $this->db_query->select('*');
+        $this->db_query->from('t_account');
+        $this->db_query->where('city',$city);
+        if(!$query = $this->db_query->get()){
+            $e = $this->db_query->error();
+            throw new Exception($e['message'], $e['code']);
+        }
+        $r = $query->result_array();
+        if(empty($r))return false;
+        return $r;
+    }
 
 
     
