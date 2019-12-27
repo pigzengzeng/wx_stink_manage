@@ -157,9 +157,9 @@ class Message extends CI_Controller
 			];
 			print_r([
 				'access_key_id'=>$access_key_id,				
-				'phone_number_json'=>$phone_number_json,				
-				'sign_name_json'=>$sign_name_json,
-				'template_param_json'=>$template_param_json	
+				'phone_number_json'=>json_decode($phone_number_json),
+				'sign_name_json'=>json_decode($sign_name_json),
+				'template_param_json'=>json_decode($template_param_json)
 			]);
 			$this->aliyun_send_message($params);
 			
