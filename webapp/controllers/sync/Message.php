@@ -53,8 +53,8 @@ class Message extends CI_Controller
 				echo 'Unable to write the '.$last_utime_filepath;
 				exit();
 			}
-			foreach ($rows as $marker) {
-				$task = $this->get_message_task($marker);
+			foreach ($rows as $marker) {				
+				$task = $this->get_message_task($marker);				
 				if(empty($task))continue;				
 				$this->send_message($task);
 			}
@@ -64,23 +64,23 @@ class Message extends CI_Controller
 	}
 	private function get_message_task($marker){
 		$city = $marker['city'];
-		if(empty($city))return null;
+		if(empty($city))return null;		
 		$customers = $this->account_model->get_account_by_city($city);
 		if(empty($customers))return null;
-		$tasks = [];
+		$tasks = [];		
 		foreach ($customers as $customer) {
 			$account_id = $customer['pk_account'];
 			$access_key_id = empty($customer['access_key_id'])?'':$customer['access_key_id'];
 			$access_key_secret = empty($customer['access_key_secret'])?'':$customer['access_key_secret'];
 			if(empty($account_id)||empty($access_key_secret))continue;
 
-			$conf_messages = $this->conf_model->get_conf_messages_by_account_id($account_id);			
+			$conf_messages = $this->conf_model->get_conf_messages_by_account_id($account_id);						
 			if(empty($conf_messages))continue;
 
 			$tels = [];
 			foreach ($conf_messages as $item) {
 				if($marker['intensity']<$item['intensity'])continue;
-				$tels += explode(',',$item['tel']);
+				$tels = explode(',',$item['tel']);
 			}
 			array_unique($tels);
 			if(empty($tels))continue;
@@ -103,8 +103,17 @@ class Message extends CI_Controller
 		];
 		$url = "https://restapi.amap.com/v3/geocode/regeo";
 		$data = $this->curl->simple_get($url,$params);	
-		$data = json_decode($data);
-		$address = empty($data->regeocode->formatted_address)?'':$data->regeocode->formatted_address;
+		$data = json_decode($data);		
+		$address =  !empty($data->regeocode->addressComponent->district)?$data->regeocode->addressComponent->district:'';
+		$address .= !empty($data->regeocode->addressComponent->township)?$data->regeocode->addressComponent->township:'';
+		$address .= !empty($data->regeocode->addressComponent->streetNumber->street)?$data->regeocode->addressComponent->streetNumber->street:'';
+		$address .= !empty($data->regeocode->addressComponent->streetNumber->number)?$data->regeocode->addressComponent->streetNumber->number:'';		
+		$address = mb_substr($address,0,20); //短信要求变量少于20个字符
+		
+
+		
+		//太长了
+		//$address = empty($data->regeocode->formatted_address)?'':$data->regeocode->formatted_address;
 		if(!empty($address)){
 			
 			if(!empty($this->intensities[$marker['intensity']])){
@@ -146,7 +155,12 @@ class Message extends CI_Controller
 				'sign_name_json'=>$sign_name_json,
 				'template_param_json'=>$template_param_json
 			];
-			print_r($params);
+			print_r([
+				'access_key_id'=>$access_key_id,				
+				'phone_number_json'=>$phone_number_json,				
+				'sign_name_json'=>$sign_name_json,
+				'template_param_json'=>$template_param_json	
+			]);
 			$this->aliyun_send_message($params);
 			
 		}
