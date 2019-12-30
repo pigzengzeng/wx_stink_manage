@@ -70,25 +70,30 @@ class Message extends CI_Controller
 		$tasks = [];		
 		foreach ($customers as $customer) {
 			$account_id = $customer['pk_account'];
-			$access_key_id = empty($customer['access_key_id'])?'':$customer['access_key_id'];
-			$access_key_secret = empty($customer['access_key_secret'])?'':$customer['access_key_secret'];
-			if(empty($account_id)||empty($access_key_secret))continue;
-
-			$conf_messages = $this->conf_model->get_conf_messages_by_account_id($account_id);						
+			$conf_messages = $this->conf_model->get_conf_messages_by_account_id($account_id);
 			if(empty($conf_messages))continue;
 
-			$tels = [];
+						
 			foreach ($conf_messages as $item) {
 				if($marker['intensity']<$item['intensity'])continue;
+				$access_key_id = empty($item['access_key_id'])?'':$item['access_key_id'];
+				$access_key_secret = empty($item['access_key_secret'])?'':$item['access_key_secret'];
+				$sign_name = empty($item['sign_name'])?'':$item['sign_name'];
+				$template_code = empty($item['template_code'])?'':$item['template_code'];
+				if(empty($account_id)||empty($access_key_secret) || empty($sign_name)||empty($template_code))continue;
 				$tels = explode(',',$item['tel']);
+				array_unique($tels);
+				if(empty($tels))continue;
+				
+				$tasks[] = [
+					'access_key_id'=>$access_key_id,
+					'access_key_secret'=>$access_key_secret,
+					'sign_name'=>$sign_name,
+					'template_code'=>$template_code,
+					'tels'=>$tels
+				];				
 			}
-			array_unique($tels);
-			if(empty($tels))continue;
-
-			$tasks[] = [
-				'access_key'=>['AccessKeyId'=>$access_key_id,'AccessKeySecret'=>$access_key_secret],
-				'tels'=>$tels
-			];			
+			
 		}
 		if(empty($tasks))return null;
 		
@@ -142,23 +147,26 @@ class Message extends CI_Controller
 		foreach ($send_tasks['tasks'] as $task ) {
 			$tel_count = count($task['tels']);
 			$phone_number_json = json_encode($task['tels']);
-			$sign_name_json = json_encode( array_fill(0,$tel_count,'秀嗅提醒') );
+			$sign_name_json = json_encode( array_fill(0,$tel_count,$task['sign_name']) );
+
 			$template_param_json = json_encode( array_fill(0,$tel_count,$send_tasks['template_params']) );
 			
-			$access_key_id = $task['access_key']['AccessKeyId'];
-			$access_key_secret = $task['access_key']['AccessKeySecret'];
+			$access_key_id = $task['access_key_id'];
+			$access_key_secret = $task['access_key_secret'];
 
 			$params = [
 				'access_key_id'=>$access_key_id,
 				'access_key_secret'=>$access_key_secret,
 				'phone_number_json'=>$phone_number_json,				
 				'sign_name_json'=>$sign_name_json,
+				'template_code'=>$task['template_code'],
 				'template_param_json'=>$template_param_json
 			];
 			print_r([
 				'access_key_id'=>$access_key_id,				
 				'phone_number_json'=>json_decode($phone_number_json),
 				'sign_name_json'=>json_decode($sign_name_json),
+				'template_code'=>$task['template_code'],
 				'template_param_json'=>json_decode($template_param_json)
 			]);
 			$this->aliyun_send_message($params);
@@ -185,7 +193,7 @@ class Message extends CI_Controller
 		                                          'RegionId' => "cn-hangzhou",
 		                                          'PhoneNumberJson' => $data['phone_number_json'],
 		                                          'SignNameJson' => $data['sign_name_json'],
-		                                          'TemplateCode' => "SMS_181211378",
+		                                          'TemplateCode' => $data['template_code'],
 		                                          'TemplateParamJson' => $data['template_param_json'],
 		                                        ],
 		                                    ])
