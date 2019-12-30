@@ -84,7 +84,7 @@ class Message extends CI_Controller
 				$tels = explode(',',$item['tel']);
 				array_unique($tels);
 				if(empty($tels))continue;
-				
+
 				$tasks[] = [
 					'access_key_id'=>$access_key_id,
 					'access_key_secret'=>$access_key_secret,
@@ -167,7 +167,8 @@ class Message extends CI_Controller
 				'phone_number_json'=>json_decode($phone_number_json),
 				'sign_name_json'=>json_decode($sign_name_json),
 				'template_code'=>$task['template_code'],
-				'template_param_json'=>json_decode($template_param_json)
+				'template_param_json'=>json_decode($template_param_json),
+				"time"=>data('Y-m-d H:i:s')
 			]);
 			$this->aliyun_send_message($params);
 			
