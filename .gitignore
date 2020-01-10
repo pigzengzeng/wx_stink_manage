@@ -19,5 +19,6 @@ ci.iml
 composer.lock
 *.bak
 *__pycache__*
+ziliao
 webroot/index.php
 webroot/moban/*
